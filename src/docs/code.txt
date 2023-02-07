@@ -3,6 +3,7 @@ int b = input(int,"Write B value:")
 string c = "6" + "7"
 int r = a + b
 string x = "A"
+
 int y = 2
 i ? (a, b): {
 	y = 90 
