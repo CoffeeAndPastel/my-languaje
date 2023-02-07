@@ -87,8 +87,6 @@ function validate_lines(text) {
         throw new Error(`Lexical Error: unknown line ${index + 1}.`);
     });
 
-    // console.log(lines.filter((line) => !!line));
-
     return lines.filter((line) => !!line);
 }
 

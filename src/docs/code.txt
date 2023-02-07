@@ -5,7 +5,7 @@ int r = a + b
 string x = "A"
 
 int y = 2
-i ? (a, b): {
+i ? (a, 7): {
 	y = 90 
 }
 y = 20
@@ -14,7 +14,7 @@ string message = "Some text"
 	&&& (a == b): {
 		int h = 2
 	}
-	output(r)	
+	output(r)
 	r = 4
 	a = 7
 }
