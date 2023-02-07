@@ -1,3 +1,3 @@
-const { validate_code } = require("./src/modules/validate_code");
+const { validate_code } = require("./src/validate");
 
 validate_code("code.txt");
