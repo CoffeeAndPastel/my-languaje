@@ -38,21 +38,23 @@ function condition_validate({ content }) {
     const value_id = '[\\w" ]+';
     const comparator_id = "==|!=|>|>=|<|<=";
 
-    const basic_condition = `(?<value_a>${value_id})${SPACE}(?<comparator_a>${comparator_id})${SPACE}(?<value_b>${value_id})`;
-    const two_condition = `${basic_condition}${SPACE}(?<logic>\\|\\||&&)${SPACE}(?<value_c>${value_id})${SPACE}(?<comparator_b>==|!=|>|>=|<|<=) *(?<value_d>${value_id})`;
+    const condition_id = `(?<logic>\\|\\||&&)?${SPACE}(?<value_a>${value_id})${SPACE}(?<comparator>${comparator_id})${SPACE}(?<value_b>${value_id})${SPACE}(?<elsecontent>.*)?`;
 
-    const condition_ids = [basic_condition, two_condition];
+    const evaluations = [];
 
-    const evaluations = (() => {
-        for (const id of condition_ids) {
-            const match = RegExp(`^${id}$`).exec(content);
-            if (!!match) return match.groups;
-        }
-        throw new Error(`${content} is invalid condition.`);
-    })();
+    const getEvaluations = (content) => {
+        const match = RegExp(`^${condition_id}$`).exec(content);
 
-    // if (!condition_ids.some((id) => !!content.match(`^${id}$`)))
-    //     throw new Error(`${content} is invalid condition.`);
+        if (!match) throw new Error(`${content} is invalid condition.`);
+
+        const { logic, value_a, value_b, comparator, elsecontent } =
+            match.groups;
+        evaluations.push({ logic, value_a, value_b, comparator });
+
+        if (elsecontent) getEvaluations(elsecontent);
+    };
+
+    getEvaluations(content);
 
     return { evaluations };
 }
@@ -112,7 +114,7 @@ function validate_structure(lines) {
             throw new Error(`Line ${index}: ${error.message}`);
         }
     }
-    // actions.map((x) => console.log(x));
+    actions.map((x) => console.log(x));
 
     return actions;
 }
