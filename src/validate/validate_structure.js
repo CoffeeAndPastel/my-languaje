@@ -25,13 +25,23 @@ function asignation_validate({ name, content }) {
     //Value
     const basic_value = '[\\w" ]+';
     const input = INPUT;
-    const operation = `^(?<value_a>${basic_value})${SPACE}(?<operator>\\+|\\-|\\*|\\/|\\/\\/|%)${SPACE}(?<value_b>${basic_value})$`;
+    const operation = `(?<value_a>${basic_value})${SPACE}(?<operator>\\+|\\-|\\*|\\/|\\/\\/|%)${SPACE}(?<value_b>${basic_value})`;
 
-    const value_ids = [basic_value, input, operation];
-    if (!value_ids.some((id) => !!content.match(`^${id}$`)))
-        throw new Error(`${content} is invalid value.`);
+    const value_ids = [
+        { name: "normal", id: `(?<value>${basic_value})` },
+        { name: "input", id: input },
+        { name: "operation", id: operation },
+    ];
+    // if (!value_ids.some(({ id }) => !!content.match(`^${id}$`)))
+    //     throw new Error(`${content} is invalid value.`);
 
-    return { name, value: content };
+    for (const { name, id } of value_ids) {
+        const match = RegExp(`^${id}$`).exec(content);
+
+        if (!match) continue;
+        return { name, content: match.groups };
+    }
+    throw new Error(`${content} is invalid value.`);
 }
 
 function condition_validate({ content }) {
@@ -114,7 +124,6 @@ function validate_structure(lines) {
             throw new Error(`Line ${index}: ${error.message}`);
         }
     }
-    actions.map((x) => console.log(x));
 
     return actions;
 }

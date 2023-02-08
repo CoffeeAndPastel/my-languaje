@@ -11,6 +11,7 @@ async function validate_code(name) {
         const lines = validate_lines(text);
         //Sintaxis validate
         const structure = validate_structure(lines);
+        console.log(structure);
     } catch (error) {
         console.error(error.message);
     }
