@@ -19,7 +19,8 @@ const INPUT =
 
 function asignation_validate({ name, content }) {
     //Name
-    if (!name.match(/^[_A-Za-z][\w]*$/))
+    const name_id = "[_A-Za-z][\\w]*";
+    if (!name.match(`^${name_id}$`))
         throw new Error(`${name} is invalid name.`);
 
     //Value
@@ -28,7 +29,8 @@ function asignation_validate({ name, content }) {
     const operation = `(?<value_a>${basic_value})${SPACE}(?<operator>\\+|\\-|\\*|\\/|\\/\\/|%)${SPACE}(?<value_b>${basic_value})`;
 
     const value_ids = [
-        { name: "normal", id: `(?<value>${basic_value})` },
+        { name: "variable", id: `(?<value>${name_id})` },
+        { name: "value", id: `(?<value>${basic_value})` },
         { name: "input", id: input },
         { name: "operation", id: operation },
     ];
@@ -117,9 +119,9 @@ function validate_structure(lines) {
         const validate = validates[name] || (() => {});
 
         try {
-            const newContent = validate(content);
-            if (!!newContent)
-                actions.push({ index, name, actions: newContent });
+            const new_content = validate(content);
+            if (!!new_content)
+                actions.push({ index, name, content: new_content });
         } catch (error) {
             throw new Error(`Line ${index}: ${error.message}`);
         }
