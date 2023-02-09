@@ -48,7 +48,7 @@ function asignation_validate({ name, content }) {
 }
 
 function condition_validate({ content }) {
-    const value_id = '[\\w" ]+';
+    const value_id = '[\\w" \\.]+';
     const comparator_id = "==|!=|>|>=|<|<=";
 
     const condition_id = `(?<logic>\\|\\||&&)?${SPACE}(?<value_a>${value_id})${SPACE}(?<comparator>${comparator_id})${SPACE}(?<value_b>${value_id})${SPACE}(?<elsecontent>.*)?`;
@@ -71,6 +71,8 @@ function condition_validate({ content }) {
 
     return { evaluations };
 }
+
+function type_value() {}
 
 function validate_structure(lines) {
     const validates = {
