@@ -4,14 +4,15 @@ string c = "6" + "7"
 int r = a + b
 int ex = a
 string x = "A"
+float some = 7
 
-int y = 2
-i ? (a, 7): {
-	y = 90 
+int Y = 2
+i ? (Y, 1): {
+	Y = 90 
 }
 y = 20
 string message = "Some text"
-&&& (a > b && a != b): {
+&&& (4.5 > some && a != b): {
 	&&& (a == b): {
 		int h = 2
 	}
