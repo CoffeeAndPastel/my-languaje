@@ -2,6 +2,7 @@ int a =     input(int, "Write A value:")
 int b = input(int,"Write B value:")
 string c = "6" + "7"
 int r = a + b
+int ex = a
 string x = "A"
 
 int y = 2
