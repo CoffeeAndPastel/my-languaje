@@ -90,12 +90,18 @@ function validate_structure(lines) {
                     `${!open ? "(" : ")"} is missing at output statement.`
                 );
 
-            const value_id = '[\\w" ]+';
+            const value_ids = [
+                { operation: "variable", id: /[_A-Za-z][\w]*/ },
+                { operation: "value", id: /[\w" ]+/ },
+            ];
 
-            if (!value.match(value_id))
-                throw new Error(`${value} is invalid value.`);
+            for (const { operation, id } of value_ids) {
+                const match = RegExp(id).exec(value);
 
-            return { value };
+                if (!match) continue;
+                return { operation, value };
+            }
+            throw new Error(`${value} is invalid value.`);
         },
         if: ({ start, content }) => {
             const evaluations = condition_validate({ content });
@@ -108,10 +114,36 @@ function validate_structure(lines) {
 
             const range_id = `^(?<value_a>[\\w]+)${SPACE},${SPACE}(?<value_b>[\\w]+)$`;
             const match = RegExp(`^${range_id}$`).exec(content);
-
             if (!match) throw new Error(`${content} is invalid range.`);
 
-            return { name, ...match.groups };
+            const { value_a, value_b } = match.groups;
+            const range = [];
+
+            const value_ids = [
+                { operation: "variable", id: /[_A-Za-z][\w]*/ },
+                { operation: "value", id: /[0-9]+/ },
+            ];
+
+            for (const { operation, id } of value_ids) {
+                const match = RegExp(id).exec(value_a);
+
+                if (!match) continue;
+                else {
+                    range.push({ operation, value: value_a });
+                    break;
+                }
+            }
+            for (const { operation, id } of value_ids) {
+                const match = RegExp(id).exec(value_b);
+
+                if (!match) continue;
+                else {
+                    range.push({ operation, value: value_b });
+                    break;
+                }
+            }
+
+            return { name, value_a: range[0], value_b: range[1] };
         },
     };
 
