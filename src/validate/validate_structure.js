@@ -1,4 +1,4 @@
-const TYPE = "(?<type>[\\w]+)";
+const TYPE = "(?<input_type>[\\w]+)";
 
 const VALUE = '(?<value>-?[\\w\\." :]+)';
 const SPACE = " *";
@@ -27,13 +27,13 @@ function asignation_validate({ name, content }) {
     //Value
     const basic_value = '[\\w" ]+';
     const input = INPUT;
-    const operation = `(?<value_a>${basic_value})${SPACE}(?<operator>\\+|\\-|\\*|\\/|\\/\\/|%)${SPACE}(?<value_b>${basic_value})`;
+    const operation = `(?<value_a>${basic_value})${SPACE}(?<operator>\\+|-|\\*|\\/|\\\\|%|\\^)${SPACE}(?<value_b>${basic_value})`;
 
     const value_ids = [
         { operation: "variable", id: `(?<value>${name_id})` },
         { operation: "value", id: `(?<value>${basic_value})` },
         { operation: "input", id: input },
-        { operation: "operation", id: operation },
+        { operation: "math", id: operation },
     ];
     // if (!value_ids.some(({ id }) => !!content.match(`^${id}$`)))
     //     throw new Error(`${content} is invalid value.`);
