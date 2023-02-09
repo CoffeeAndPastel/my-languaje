@@ -1,4 +1,5 @@
-const NAME = "(?<name>[\\w]+)";
+const TYPE = "(?<type>[\\w]+)";
+
 const VALUE = '(?<value>-?[\\w\\." :]+)';
 const SPACE = " *";
 const OPBLOCK = "(?<open>\\(?)";
@@ -8,7 +9,7 @@ const INPUT =
     "input" +
     SPACE +
     OPBLOCK +
-    NAME +
+    TYPE +
     SPACE +
     "(," +
     SPACE +
@@ -29,19 +30,19 @@ function asignation_validate({ name, content }) {
     const operation = `(?<value_a>${basic_value})${SPACE}(?<operator>\\+|\\-|\\*|\\/|\\/\\/|%)${SPACE}(?<value_b>${basic_value})`;
 
     const value_ids = [
-        { name: "variable", id: `(?<value>${name_id})` },
-        { name: "value", id: `(?<value>${basic_value})` },
-        { name: "input", id: input },
-        { name: "operation", id: operation },
+        { operation: "variable", id: `(?<value>${name_id})` },
+        { operation: "value", id: `(?<value>${basic_value})` },
+        { operation: "input", id: input },
+        { operation: "operation", id: operation },
     ];
     // if (!value_ids.some(({ id }) => !!content.match(`^${id}$`)))
     //     throw new Error(`${content} is invalid value.`);
 
-    for (const { name, id } of value_ids) {
+    for (const { operation, id } of value_ids) {
         const match = RegExp(`^${id}$`).exec(content);
 
         if (!match) continue;
-        return { name, content: match.groups };
+        return { name, operation, content: match.groups };
     }
     throw new Error(`${content} is invalid value.`);
 }
