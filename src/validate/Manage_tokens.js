@@ -83,7 +83,10 @@ class Manage_tokens {
     find(name) {
         return this.tokens.find((token) => token.name == name);
     }
-    create({ type, name, operation, content }) {
+    findIndex(name) {
+        return this.tokens.findIndex((token) => token.name == name);
+    }
+    create({ type, name, operation = "value", content }) {
         if (this.exists(name)) throw Error(`${name} already exist`);
         const type_id = {
             int: /^(-?\d+)$/,
@@ -120,9 +123,32 @@ class Manage_tokens {
 
         const id = type_id[type] || null;
         const validate = this.validates[operation] || (() => {});
-        const value = validate({ type, id, ...content });
+        if (validate({ type, id, ...content })) token.content = content;
+    }
+    fakeModify({ name, operation, content }) {
+        if (!this.exists(name)) throw new Error(`variable ${name} no exist.`);
+        const token = this.find(name);
 
-        token.content = content;
+        if (token.name == token.name.toUpperCase())
+            throw new Error(`${name} is a constant.`);
+
+        const type = token.type;
+
+        const type_id = {
+            int: /^(-?\d+)$/,
+            float: /^-?\d+(\.\d+)?$/,
+            string: /^\".+\"$/,
+        };
+
+        const id = type_id[type] || null;
+        const validate = this.validates[operation] || (() => {});
+        const value = validate({ type, id, ...content });
+    }
+    delete(name) {
+        if (!this.exists(name)) throw new Error(`variable ${name} no exist.`);
+        const token_index = this.findIndex(name);
+
+        this.tokens.splice(token_index, 1);
     }
 }
 

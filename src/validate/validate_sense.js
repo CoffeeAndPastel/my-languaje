@@ -35,16 +35,26 @@ const validate_conditions = (Manage, { evaluations }) => {
                 `${value_a.trim()} & ${value_b.trim()} don't match types.`
             );
     }
-    // { operation: "variable", id:  },
-    // { operation: "value", id: /[0-9]+/ },
 };
 
 function validate_sense(actions) {
     const Tokens = new Manage_tokens();
+    let blocks = 0;
+    const staged_tokens = {};
+    const staged_item = ({ name }) => {
+        if (!staged_tokens[blocks]) staged_tokens[blocks] = [name];
+        else staged_tokens[blocks].push(name);
+    };
 
     const validates = {
-        declaration: (content) => Tokens.create(content),
-        asignation: (content) => Tokens.modify(content),
+        declaration: (content) => {
+            Tokens.create(content);
+            if (!!blocks) staged_item(content);
+        },
+        asignation: (content) => {
+            if (!blocks) Tokens.modify(content);
+            else Tokens.fakeModify(content);
+        },
         output: ({ operation, value }) => {
             const validates = {
                 variable: (value) => {
@@ -56,6 +66,7 @@ function validate_sense(actions) {
             validate(value);
         },
         for: ({ name, value_a, value_b }) => {
+            blocks++;
             if (Tokens.exists(name))
                 throw new Error(`variable ${name} already exist.`);
 
@@ -87,7 +98,20 @@ function validate_sense(actions) {
             //     );
         },
         if: (content) => {
+            blocks++;
             validate_conditions(Tokens, content);
+        },
+        while: (content) => {
+            blocks++;
+            validate_conditions(Tokens, content);
+        },
+        close: () => {
+            const tokens = staged_tokens[blocks] || [];
+            for (const token of tokens) {
+                Tokens.delete(token);
+            }
+            delete staged_tokens[blocks];
+            blocks--;
         },
     };
 
@@ -100,7 +124,7 @@ function validate_sense(actions) {
             throw new Error(`Line ${index}: ${error.message}`);
         }
     }
-    // console.log(Tokens.tokens);
+    console.log(Tokens.tokens);
 }
 
 module.exports = { validate_sense };

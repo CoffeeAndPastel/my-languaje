@@ -1,4 +1,4 @@
-int a =     input(int, "Write A value:")
+int a = 7
 int b = input(int,"Write B value:")
 string c = "6" + "7"
 int r = a + b
@@ -6,15 +6,17 @@ int ex = a
 string x = "A"
 float some = 7
 
-int Y = 2
-i ? (Y, 1): {
-	Y = 90 
+int y = 2
+i ? (y, 1): {
+	y = 90 
+	a = "a"
 }
 y = 20
 string message = "Some text"
 &&& (4.5 > some && a != b): {
 	&&& (a == b): {
-		int h = 2
+		int h = 2 
+		a = 16
 	}
 	output(r)
 	r = 4
@@ -22,9 +24,10 @@ string message = "Some text"
 }
 ||| (a > b && a != b): {
 	&&& (a == b): {
-		int h = 2
+		int ph = 2
 	}
 	output(r)
 	r = 4
 	a = 7
+	a = 27
 }

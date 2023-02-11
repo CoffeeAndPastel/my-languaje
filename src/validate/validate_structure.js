@@ -72,9 +72,8 @@ function condition_validate({ content }) {
     return { evaluations };
 }
 
-function type_value() {}
-
 function validate_structure(lines) {
+    let keys = 0;
     const validates = {
         declaration: ({ type, name, content }) => {
             const types = ["string", "int", "float"];
@@ -106,11 +105,16 @@ function validate_structure(lines) {
             throw new Error(`${value} is invalid value.`);
         },
         if: ({ start, content }) => {
+            keys++;
             const evaluations = condition_validate({ content });
             return { start, ...evaluations };
         },
-        while: condition_validate,
+        while: (content) => {
+            keys++;
+            condition_validate(content);
+        },
         for: ({ name, content }) => {
+            keys++;
             if (!name.match(/^[_A-Za-z][\w]*$/))
                 throw new Error(`${name} is invalid name.`);
 
@@ -147,6 +151,10 @@ function validate_structure(lines) {
 
             return { name, value_a: range[0], value_b: range[1] };
         },
+        close: (content) => {
+            keys--;
+            return content;
+        },
     };
 
     const actions = [];
@@ -161,6 +169,8 @@ function validate_structure(lines) {
             throw new Error(`Line ${index}: ${error.message}`);
         }
     }
+
+    if (keys > 0) throw new Error(`There are a block without close.`);
 
     return actions;
 }

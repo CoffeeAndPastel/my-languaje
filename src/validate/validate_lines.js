@@ -81,11 +81,16 @@ function validate_lines(text) {
             if (!match) continue;
 
             if (match[0] == line)
-                return { index: index + 1, name, content: match.groups };
+                return {
+                    index: index + 1,
+                    name,
+                    content: match.groups || { index },
+                };
         }
 
         throw new Error(`Lexical Error: unknown line ${index + 1}.`);
     });
+
 
     return lines.filter((line) => !!line);
 }
